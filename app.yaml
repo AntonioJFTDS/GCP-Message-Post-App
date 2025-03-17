@@ -1,0 +1,7 @@
+runtime: python311
+
+entrypoint: gunicorn -b :$PORT message_post_server:app
+
+handlers:
+  - url: /.*
+    script: auto
