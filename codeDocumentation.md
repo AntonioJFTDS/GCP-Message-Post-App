@@ -64,21 +64,55 @@ Each **post** is stored as a **document** inside `collection_posts`.A **post can
 
 ---
 
-## **5️⃣ Alternative Approach (Separate `comments` Collection)**
+## **5️⃣ Alternative Approaches**
 
-For **very high comment volume** (e.g., thousands per post), an alternative structure would be:
+There are two alternative ways to store comments instead of embedding them inside the post document:
 
-- **`collection_posts` → Stores posts (without comments)**
-- **`collection_comments` → Stores each comment separately with a reference to `post_id`**
+### **🔹 Approach 1: Subcollection for Comments**
+In this approach, comments are stored as separate documents inside a subcollection under each post.
 
-### **🚫 Why Not Use This Now?**
+#### **✅ Pros:**
+- **Scalable** – Can handle a large number of comments per post.
+- **Efficient writes** – Updating or adding a comment does not modify the entire post document.
+- **Better query flexibility** – Can retrieve comments separately or paginate them efficiently.
 
-| **Option**                        | **Pros**                           | **Cons**                                   |
+#### **🚫 Cons:**
+- **More Reads Required** – Fetching a post **does not automatically fetch its comments**, leading to additional Firestore read costs.
+- **More Complex Queries** – Requires separate queries to fetch comments related to a post.
+- **Transaction Complexity** – Deleting a post and its comments in a single operation requires Firestore batch writes or transactions.
+
+**Example Structure:**
+
+- **collection_posts** (stores posts)
+  - **postID_123** (document)
+    - **comments** (subcollection)
+      - **commentID_1** (document)
+      - **commentID_2** (document)
+
+---
+
+### **🔹 Approach 2: Separate `comments` Collection**
+Instead of using a subcollection, a separate top-level collection for comments can be used, linking each comment to its post.
+
+#### **✅ Pros:**
+- **Scales well for massive comment volumes.**
+- **Allows complex queries across all comments**, such as fetching the most recent comments from multiple posts.
+
+#### **🚫 Cons:**
+- **Requires multiple Firestore reads.**
+- **No automatic relationship** between posts and their comments.
+
+---
+
+## **6️⃣ Comparison of Approaches**
+
+| **Approach**                     | **Pros**                           | **Cons**                                   |
 | --------------------------------- | ---------------------------------- | ------------------------------------------ |
 | ✅ Embedded Comments (Current)     | Fewer queries, faster reads        | Slower for posts with **10,000+ comments** |
-| 🚫 Separate `comments` Collection | Scales better for massive comments | Requires **multiple Firestore reads**      |
+| 🚀 Subcollection for Comments     | Scalable, efficient writes         | More reads, complex queries                |
+| 🔄 Separate `comments` Collection | Scales better for massive comments | Requires **multiple Firestore reads**      |
 
-For this project, **embedding comments inside posts is the best approach**.
+For this project, **embedding comments inside posts is the simplest approach**. However, **subcollections** or a **separate comments collection** may be better if scaling is a concern.
 
 ---
 
