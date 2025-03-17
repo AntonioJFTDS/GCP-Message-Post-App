@@ -23,17 +23,23 @@ Each post is stored as a document inside `collection_posts`. Each post can have 
 ### Example Post Document:
 ```json
 {
-  "author": "user@example.com",
+  "author": "user123@gmail.com",
   "creation_date": "2025-03-13T10:00:00Z",
   "change_date": "2025-03-13T11:00:00Z",
   "subject": "My First Post",
   "body": "This is the content of my post.",
   "comments": [
     {
-      "author": "commenter1@example.com",
+      "author": "commenter1@gmail.com",
       "creation_date": "2025-03-13T11:30:00Z",
       "change_date": "2025-03-13T11:45:00Z",
       "body": "Nice post!"
+    },
+    {
+      "author": "commenter2@gmail.com",
+      "creation_date": "2025-03-13T12:00:00Z",
+      "change_date": "2025-03-13T12:10:00Z",
+      "body": "Thanks for sharing!"
     }
   ]
 }
